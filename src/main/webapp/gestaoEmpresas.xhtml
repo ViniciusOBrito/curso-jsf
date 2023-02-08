@@ -16,46 +16,54 @@
 		</f:metadata>
 
 		<h:form>
-		
-			<p:toolbar>
-			<f:facet name="left">
-			
-				<p:inputText placeholder="Digite aqui um termo para pesquisa.." size="30"/>
-				
-				<span class="ui-separator">
-					<span class="ui-icon ui-icon-grip-dotted-vertical"/>
-				</span>
-				
-				<p:commandButton value="Pesquisar" icon="fa fa fa-search"/>
-				
-				<span class="ui-separator">
-					<span class="ui-icon ui-icon-grip-dotted-vertical"/>
-				</span>
-				
-				<p:commandButton value="Nova" icon="fa fa-plus" onclick="PF('empresaDialogWidgetVar').show()"/>
-				
-				<span class="ui-separator">
-					<span class="ui-icon ui-icon-grip-dotted-vertical"/>
-				</span>
-				
-				<p:commandButton title="Editar" icon="fa fa-edit"/>
 
-				<p:commandButton title="Excluir" icon="fa fa-trash"/>
-				
-				<span class="ui-separator">
-					<span class="ui-icon ui-icon-grip-dotted-vertical"/>
-				</span>
-				
-				<p:commandButton title="Exporta arquivos para o Excel" icon="fa fa-file-excel-o"/>
-			</f:facet>
-				
+			<p:messages autoUpdate="true" />
+
+			<p:toolbar>
+				<f:facet name="left">
+
+					<p:inputText placeholder="Digite aqui um termo para pesquisa.."
+						size="30" value="#{gestaoEmpresasBean.termoPesquisa}" />
+
+					<span class="ui-separator"> <span
+						class="ui-icon ui-icon-grip-dotted-vertical" />
+					</span>
+
+					<p:commandButton value="Pesquisar" icon="fa fa-search"
+						actionListener="#{gestaoEmpresasBean.pesquisar}"
+						update="empresasDataTable" />
+
+					<span class="ui-separator"> <span
+						class="ui-icon ui-icon-grip-dotted-vertical" />
+					</span>
+
+					<p:commandButton value="Nova" icon="fa fa-plus"
+						onclick="PF('empresaDialogWidgetVar').show()" />
+
+					<span class="ui-separator"> <span
+						class="ui-icon ui-icon-grip-dotted-vertical" />
+					</span>
+
+					<p:commandButton title="Editar" icon="fa fa-edit" />
+
+					<p:commandButton title="Excluir" icon="fa fa-trash" />
+
+					<span class="ui-separator"> <span
+						class="ui-icon ui-icon-grip-dotted-vertical" />
+					</span>
+
+					<p:commandButton title="Exporta arquivos para o Excel"
+						icon="fa fa-file-excel-o" />
+				</f:facet>
+
 			</p:toolbar>
-			
-			<p:spacer height="20px"/>
-			
-			<p:dataTable value="#{gestaoEmpresasBean.listaEmpresas}"
-				var="empresa" emptyMessage="Nenhuma informação a ser exibida"
-				paginator="true" rows="10" paginatorPosition="bottom">
+
+			<p:spacer height="20px" />
+
+			<p:dataTable id="empresasDataTable"
+				value="#{gestaoEmpresasBean.listaEmpresas}" var="empresa"
+				emptyMessage="Nenhuma informação a ser exibida" paginator="true"
+				rows="10" paginatorPosition="bottom">
 				<p:column headerText="Razão social" sortBy="#{empresa.razaoSocial}">
 					<h:outputText value="#{empresa.razaoSocial}" />
 				</p:column>
@@ -72,12 +80,45 @@
 					<h:outputText value="#{empresa.ramoAtividade.descricao}" />
 				</p:column>
 			</p:dataTable>
-			
+
 			<p:dialog header="Nova empresa" widgetVar="empresaDialogWidgetVar"
-			modal="true" resizable="false" closeOnEscape="true">
-				<p:commandButton value="Teste!"/>
+				modal="true" resizable="false" closeOnEscape="true">
+				<p:panelGrid columns="2">
+					<p:outputLabel value="Razão social: " for="razaoSocial" />
+					<p:inputText id="razaoSocial" size="80" maxlength="120" />
+
+					<p:outputLabel value="Nome fantasia: " for="nomeFantasia" />
+					<p:inputText id="nomeFantasia" size="80" maxlength="120" />
+
+
+					<p:outputLabel value="Tipo empresa: " for="tipo" />
+					<p:selectOneMenu id="tipo">
+						<f:selectItem itemLabel="Selecione..." />
+						<f:selectItems value="#{gestaoEmpresasBean.tiposEmpresa}"
+							var="tipoEmpresa" itemLabel="#{tipoEmpresa.descricao}"
+							itemValue="#{tipoEmpresa}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="CNPJ" for="cnpj" />
+					<p:inputMask id="cnpj" mask="99.999.999/9999-99" size="18"
+						maxlength="18" />
+
+					<p:outputLabel value="Data Fundação" for="dataFundacao" />
+					<p:calendar id="dataFundacao" pattern="dd/MM/yyyy" size="20" />
+
+					<p:outputLabel value="Ramo atividade: " for="ramoAtividade" />
+					<p:autoComplete id="ramoAtividade" size="80"
+						value="#{gestaoEmpresasBean.empresa.ramoAtividade}"
+						completeMethod="#{gestaoEmpresasBean.completarRamoAtividade}"
+						converter="#{gestaoEmpresasBean.ramoAtividadeConverter}"
+						var="ramoAtividade" itemLabel="#{ramoAtividade.descricao}"
+						itemValue="#{ramoAtividade}" />
+
+					<p:outputLabel />
+					<p:commandButton value="Salvar" />
+				</p:panelGrid>
 			</p:dialog>
-			
+
 		</h:form>
 	</ui:define>
 
