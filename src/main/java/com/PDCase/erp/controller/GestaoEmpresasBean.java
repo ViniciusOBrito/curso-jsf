@@ -33,7 +33,7 @@ public class GestaoEmpresasBean implements Serializable {
 
 	@Inject
 	private RamoAtividades ramoAtividades;
-	
+
 	@Inject
 	private CadastroEmpresaService cadastroEmpresaService;
 
@@ -42,33 +42,48 @@ public class GestaoEmpresasBean implements Serializable {
 	private String termoPesquisa;
 
 	private Converter ramoAtividadeConverter;
-	
+
+	@Inject
 	private Empresa empresa;
-	
+
 	public void prepararNovaEmpresa() {
 		empresa = new Empresa();
 	}
 
 	public void salvar() {
 		cadastroEmpresaService.salvar(empresa);
-		
-		if(jaHouvePesquisa()) {
-			pesquisar();
-		}else {
-			todasEmpresas();
-		}
-		
+
+		atualizarRegistro();
+
 		messages.info("Empresa salva com sucesso!");
-		
-		RequestContext.getCurrentInstance().update(Arrays.asList("frm:empresasDataTable","frm:messages"));
+
+		RequestContext.getCurrentInstance().update(Arrays.asList("frm:empresasDataTable", "frm:messages"));
 	}
-	
-		public void pesquisar() {
+
+	public void pesquisar() {
 		listaEmpresas = empresas.pesquisar(termoPesquisa);
 
 		if (listaEmpresas.isEmpty()) {
 			messages.info("Sua consulta não retornou registros.");
 		}
+	}
+	
+	public void prepararEdicao() {
+		ramoAtividadeConverter = new RamoAtividadeConverter(Arrays.asList(empresa.getRamoAtividade())); 
+	}
+	
+	public void excluir() {
+		cadastroEmpresaService.excluir(empresa);
+		
+		empresa = null;
+		
+		atualizarRegistro();
+		
+		messages.info("Empresa excluida com sucesso!");
+	}
+
+	public boolean isEmpresaSelecionada() {
+		return empresa != null && empresa.getId() != null;
 	}
 
 	public void todasEmpresas() {
@@ -102,6 +117,14 @@ public class GestaoEmpresasBean implements Serializable {
 	public Converter getRamoAtividadeConverter() {
 		return ramoAtividadeConverter;
 	}
+
+	private void atualizarRegistro() {
+		if (jaHouvePesquisa()) {
+			pesquisar();
+		} else {
+			todasEmpresas();
+		}
+	}
 	
 	private boolean jaHouvePesquisa() {
 		return termoPesquisa != null && !"".equals(termoPesquisa);
@@ -109,5 +132,9 @@ public class GestaoEmpresasBean implements Serializable {
 
 	public Empresa getEmpresa() {
 		return empresa;
+	}
+
+	public void setEmpresa(Empresa empresa) {
+		this.empresa = empresa;
 	}
 }

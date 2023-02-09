@@ -15,8 +15,9 @@ public class RamoAtividadeConverter implements Converter {
     public RamoAtividadeConverter(List<RamoAtividade> listaRamoAtividades) {
         this.listaRamoAtividades = listaRamoAtividades;
     }
+    
 
-    @Override
+	@Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if (value == null) {
             return null;
